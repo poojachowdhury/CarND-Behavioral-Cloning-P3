@@ -1,160 +1,114 @@
-**README**
+# **Behavioral Cloning** 
+
+## README
 
 ---
 
-**Vehicle Detection Project**
+**Behavioral Cloning Project**
 
 The goals / steps of this project are the following:
+* Use the simulator to collect data of good driving behavior
+* Build, a convolution neural network in Keras that predicts steering angles from images
+* Train and validate the model with a training and validation set
+* Test that the model successfully drives around track one without leaving the road
+* Summarize the results with a written report
 
-* Perform a Histogram of Oriented Gradients (HOG) feature extraction on a labeled training set of images and train a classifier Linear SVM classifier
-* Optionally, you can also apply a color transform and append binned color features, as well as histograms of color, to your HOG feature vector. 
-* Note: for those first two steps don't forget to normalize your features and randomize a selection for training and testing.
-* Implement a sliding-window technique and use your trained classifier to search for vehicles in images.
-* Run your pipeline on a video stream (start with the test_video.mp4 and later implement on full project_video.mp4) and create a heat map of recurring detections frame by frame to reject outliers and follow detected vehicles.
-* Estimate a bounding box for vehicles detected.
 
-[//]: # "Image References"
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
-[video1]: ./project_video.mp4
-
-## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
-### Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
+## Rubric Points
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
 ---
-### Writeup / README
+### Files Submitted & Code Quality
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one.  You can submit your writeup as markdown or pdf.  [Here](https://github.com/udacity/CarND-Vehicle-Detection/blob/master/writeup_template.md) is a template writeup for this project you can use as a guide and a starting point.  
+#### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
-You're reading it!
+My project includes the following files:
+* model.py containing the script to create and train the model
+* drive.py for driving the car in autonomous mode
+* model.h5 containing a trained convolution neural network 
+* writeup_report.md or writeup_report.pdf summarizing the results
 
-### Histogram of Oriented Gradients (HOG)
-
-#### 1. Explain how (and identify where in your code) you extracted HOG features from the training images.
-
-The code for this step is contained in the fourth code cell of the IPython notebook (of the file called `vehicle_tracking.py`).  The code is referencing the udacity classroom quiz solutions that I have solved earlier.
-
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
-
-![alt text][image1]
-
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
-
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
-
-
-![alt text][image2]
-
-#### 2. Explain how you settled on your final choice of HOG parameters.
-
-I tried various combinations of parameters and set them as shown-
-
-Orient = 9
-Pix_per_cell = 8
-Cell_per_block = 2
-
-These values are in accordance to udacity quiz solved.
-
-#### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
-
-I trained a linear SVM using all the following features  - 
-
-1. HOG features
-2. Spatial binning of images
-3. Color histogram       
-
-The trained classifier is in 12th code cell. I have used all the features to augment the training data. I have used YCrCb color space for spatial binning and throughout the code .I have used Color histograms features as well and included in output images showing three channel R,G,B histograms.
-
-The extract_features function extracts the features returned by the bin_spatial, color_hist and get_hog_features functions. Each functions has a 'True' flag assigned to it so that the features can be extracted individually or all at once.
-
-### Sliding Window Search
-
-#### 1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
-
-I decided to crop the upper part of the image as it contains trees and clouds. Then , I have used overlap as 50% as it was giving clear output not creating bunch of windows at a place so that while applying heatmap I have just added threshold as 2 .The xy_window I tried with different values but finally chose 64 X 64 value.
-
-The sliding window has been implemented in 8th code cell.
-
-```
-color_space = 'YCrCb' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-orient = 10  # HOG orientations
-pix_per_cell = 8 # HOG pixels per cell
-cell_per_block = 2 # HOG cells per block
-hog_channel = 'ALL' # Can be 0, 1, 2, or "ALL"
-spatial_size = (32, 32) # Spatial binning dimensions
-hist_bins = 64   # Number of histogram bins
-spatial_feat = True # Spatial features on or off
-hist_feat = True # Histogram features on or off
-hog_feat = True # HOG features on or off
+#### 2. Submission includes functional code
+Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
+```sh
+python drive.py model.h5
 ```
 
+#### 3. Submission code is usable and readable
+
+The model.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
+
+### Model Architecture and Training Strategy
+
+#### 1. An appropriate model architecture has been employed
+
+My model consists of 5 convolution neural network layers with 5x5 and 3X3 filter sizes and depths between 24,36,48 and 64 (model.py lines 65-72) 
+
+The model includes RELU layers to introduce nonlinearity, and the data is normalized in the model using a Keras lambda layer (code line 67). 
+
+#### 2. Attempts to reduce overfitting in the model
+
+The model contains dropout layers in order to reduce overfitting (model.py lines 77 and 79). 
+
+The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+
+#### 3. Model parameter tuning
+
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 81).
+
+#### 4. Appropriate training data
+
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, left images, right images and flipping all of them. 
+
+For details about how I created the training data, see the next section. 
+
+### Model Architecture and Training Strategy
+
+#### 1. Solution Design Approach
+
+The overall strategy for deriving a model architecture was to check from Udacity classroom lecture on "Even more powerful network" that is "NVIDIA architecture" and modifying on training data and including dropout layers.
+
+My first step was to use a convolution neural network model similar to the NVIDIA model I thought this model might be appropriate because this has 5 convolutional layers and dense layers appropriate to train.
+
+In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
+
+To combat the overfitting, I modified the model so that I added one dropout layer. 
+
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track like after crossing the bridge, to improve the driving behavior in these cases, I added another dropout layer and flipped all the images to increase training data.
+
+At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+
+#### 2. Final Model Architecture
+
+The final model architecture (model.py lines 65-80) consisted of 5 convolution layers and layer depths 24, 48,64,64 and 3 Dense layers.
+
+#### 3. Creation of the Training Set & Training Process
+
+To capture good driving behavior,I used Udacity's sample data. Here is an example image of center lane driving:
 
 
-#### 2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
-
-![alt text][image4]
----
-
-### Video Implementation
-
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
-Here's a [link to my video result](output_video/project_video.mp4)
-
-Output_video/project_video.mp4
-
-
-#### 2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
-
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
-
-I have implemented the similar way in 
-
-Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
-
-### Here are six frames and their corresponding heatmaps:
-
-![alt text][image5]
-
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
-![alt text][image6]
-
-### Here the resulting bounding boxes are drawn onto the last frame in the series:
-![alt text][image7]
+Here is an example image of left and right lane driving respectively:
 
 
 
----
 
-### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
 
-**Issues :**
 
-There were lot of false positives detected at the initial stage while implementing.
 
-**What was helpful ?**
+To augment the data sat, I also flipped images that this would be helpful to train properly. For example, here is an image that has then been flipped:
 
-Tweaking a lot of parameters were helpful in different ways to consider which will give the proper output.
 
-Creating different scales and augmenting the data more with several feature vectors help better training.
 
-The accuracy I got was 98-99%.
 
-**Where it may fail ? **
 
-It is not able to pass the challenge video as in extreme shady regions or bright parts it is not able to find the cars .
 
-**How to Robust the pipeline**
+After the collection process, I had 32144 number of data points. I then preprocessed this data by normalising using Lambda layers.
 
-I think using deep-learning for vehicle recognition it can be trained better or  perhaps using the "YOLO" (You Look Only Once )method.
+
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
+
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 7 as evidenced by validation loss on every epochs, I used an adam optimizer so that manually training the learning rate wasn't necessary.
 
