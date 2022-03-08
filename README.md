@@ -1,7 +1,4 @@
 # **Behavioral Cloning** 
-
-## README
-
 ---
 
 **Behavioral Cloning Project**
